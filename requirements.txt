@@ -1,0 +1,4 @@
+numpy
+Pylint
+pydantic
+mypy
