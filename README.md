@@ -1,7 +1,46 @@
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
-# Quaternions
-[![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
+[Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 
-A quaternion is a type of four-dimensional number.  It can be described as the sum of a scalar and a three-dimensional vector.  Quaternions were devised by Irish mathematician William Rowan Hamilton in 1843.  The algebra of quaternions, denoted by <b>H</b>, is a non-commutative divison ring.  Source: https://en.m.wikipedia.org/wiki/Quaternion
+ # Quaternions
 
-This folder contains a quaternion class in [Python](https://github.com/dbh2100/quaternion/blob/main/quaternion.py) and [C++](https://github.com/dbh2100/quaternion/blob/main/quaternion.cpp), a [quaternionic integer](https://github.com/dbh2100/quaternion/blob/main/quaternionic_integer.py) and [numpy-inspired subclasses](https://github.com/dbh2100/quaternion/blob/main/quaternion_numpy.py), and [several tools for use with quaternions](https://github.com/dbh2100/quaternion/tree/main/utils).
+This module provides classes and utilities for working with quaternions — a number system that extends complex numbers to four dimensions. Quaternions are commonly used to represent rotations in 3D space and are valued for their numerical stability and compact representation compared with rotation matrices.
+
+Key features in this folder:
+
+- `quaternion.py`: a pure-Python `Quaternion` class with arithmetic, conjugation, norm, and rotation helpers.
+- `quaternion.cpp`: a C++ implementation for performance-sensitive use cases.
+- `quaternionic_integer.py`: utilities for quaternionic integer arithmetic.
+- `quaternion_numpy.py`: NumPy-style subclasses and interoperability helpers.
+- `utils/`: assorted helper functions and tools for quaternion operations.
+
+## Overview
+Quaternions have the form a + bi + cj + dk, where a, b, c, d are real numbers and i, j, k satisfy specific multiplication rules. The quaternion algebra is non-commutative but supports division (a division ring).
+
+## Usage
+Install any project dependencies and import the module from this package. Example (illustrative):
+
+```python
+from quaternion.quaternion import Quaternion
+
+# Construct a quaternion and perform basic operations
+q = Quaternion(1, 0, 1, 0)
+r = Quaternion(0, 1, 0, 1)
+product = q * r
+conj = q.conjugate()
+norm = q.norm()
+```
+
+Refer to the module docstrings and tests for full API details and additional examples.
+
+## Development & Tests
+- Run unit tests (from repository root):
+
+```bash
+pip install -r requirements.txt
+pytest
+```
+
+## Contributing
+- Bug reports, feature requests, and pull requests are welcome. Please include tests and documentation for new features.
+
+## References
+- See standard references on quaternions and rotation mathematics for theory and applications.
