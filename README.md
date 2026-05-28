@@ -7,7 +7,9 @@ This module provides classes and utilities for working with quaternions — a nu
 Key features in this folder:
 
 - `quaternion.py`: a pure-Python `Quaternion` class with arithmetic, conjugation, norm, and rotation helpers.
-- `quaternion.cpp`: a C++ implementation for performance-sensitive use cases.
+- `quaternion.cpp`: a C++ implementation.
+- `Quaternion.java`: a Java implementation.
+- `Quaternion.hs`: a Haskell implementation.
 - `quaternionic_integer.py`: utilities for quaternionic integer arithmetic.
 - `quaternion_numpy.py`: NumPy-style subclasses and interoperability helpers.
 - `utils/`: assorted helper functions and tools for quaternion operations.
