@@ -1,5 +1,6 @@
 module Quaternion 
 ( Quaternion(..)
+, angle
 ) where
 
 data Quaternion = Quaternion Float Float Float Float deriving (Eq, Show)
@@ -31,3 +32,8 @@ instance Num Quaternion where
             j = s1*j2 - i1*k2 + j1*s2 + k1*i2
             k = s1*k2 + i1*j2 - j1*i2 + k1*s2
         in Quaternion s i j k
+
+angle :: Quaternion -> Float
+angle (Quaternion s i j k) = 
+    let Quaternion norm _ _ _ = abs (Quaternion s i j k)
+    in acos (s / norm)
