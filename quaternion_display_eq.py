@@ -97,21 +97,6 @@ class DisplayEquation:
         '''Operator to apply to quaternions'''
         return self._operator
 
-    @q1.setter
-    def q1(self, value):
-        self._q1 = value
-        self._create_equation()
-
-    @q2.setter
-    def q2(self, value):
-        self._q2 = value
-        self._create_equation()
-
-    @operator.setter
-    def operator(self, value):
-        self._operator = value
-        self._create_equation()
-
     def _create_equation(self):
 
         q1 = self.q1

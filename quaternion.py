@@ -83,7 +83,7 @@ class Quaternion(Number):
             return NotImplemented
         return Quaternion(s, i, j, k)
 
-    def __radd__(self, other: Quaternion) -> Quaternion:
+    def __radd__(self, other: Union[float, Quaternion]) -> Quaternion:
         if isinstance(other, Real):
             s = float(other) + self.scalar
             i = self.i
@@ -110,7 +110,7 @@ class Quaternion(Number):
     def __rsub__(self, other: Quaternion) -> Quaternion:
         return -self + other
 
-    def __mul__(self, other: Quaternion) -> Quaternion:
+    def __mul__(self, other: Union[float, Quaternion]) -> Quaternion:
         if isinstance(other, Real):
             s = self.scalar * float(other)
             i = self.i * float(other)
@@ -130,7 +130,7 @@ class Quaternion(Number):
             return NotImplemented
         return Quaternion(s, i, j, k)
 
-    def __rmul__(self, other: Quaternion) -> Quaternion:
+    def __rmul__(self, other: Union[float, Quaternion]) -> Quaternion:
         if isinstance(other, Real):
             s = float(other) * self.scalar
             i = float(other) * self.i
@@ -145,7 +145,7 @@ class Quaternion(Number):
             return NotImplemented
         return Quaternion(s, i, j, k)
 
-    def __truediv__(self, other: Quaternion) -> Quaternion:
+    def __truediv__(self, other: Union[float, Quaternion]) -> Quaternion:
         if isinstance(other, Real):
             return Quaternion(
                 self.scalar / float(other),
@@ -294,4 +294,4 @@ class Quaternion(Number):
             object.__setattr__(self, 'j', float(scalar.j))
             object.__setattr__(self, 'k', float(scalar.k))
 
-Quaternion.register(Complex)
+Quaternion.register(Complex)  # type: ignore[type-abstract]

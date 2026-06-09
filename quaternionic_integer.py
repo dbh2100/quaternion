@@ -162,4 +162,4 @@ class QuaternionicInteger(Quaternion):
     def conjugate(self):
         return QuaternionicInteger(self.scalar, -self.i, -self.j, -self.k)
 
-QuaternionicInteger.register(Integral)
+QuaternionicInteger.register(Integral) # type: ignore[type-abstract]
