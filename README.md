@@ -10,8 +10,7 @@ Key features in this folder:
 - `quaternion.cpp`: a C++ implementation.
 - `Quaternion.java`: a Java implementation.
 - `Quaternion.hs`: a Haskell implementation.
-- `quaternionic_integer.py`: utilities for quaternionic integer arithmetic.
-- `quaternion_numpy.py`: NumPy-style subclasses and interoperability helpers.
+- `quaternionic_integer.py`: a quaternion subclass with integral components.
 - `utils/`: assorted helper functions and tools for quaternion operations.
 
 ## Overview

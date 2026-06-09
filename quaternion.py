@@ -283,4 +283,15 @@ class Quaternion(Number):
             return cls(*it)
         raise TypeError(f'{cls.__name__}.from_iterable() argument must be an iterable')
 
+    def __post_init__(self):
+        # Allow construction like Quaternion(QuaternionicInteger(...))
+        # by expanding the passed-in quaternion-like object into components.
+        scalar = self.scalar
+        # detect objects that behave like quaternions (have numeric components)
+        if hasattr(scalar, 'scalar') and hasattr(scalar, 'i') and hasattr(scalar, 'j') and hasattr(scalar, 'k'):
+            object.__setattr__(self, 'scalar', float(scalar.scalar))
+            object.__setattr__(self, 'i', float(scalar.i))
+            object.__setattr__(self, 'j', float(scalar.j))
+            object.__setattr__(self, 'k', float(scalar.k))
+
 Quaternion.register(Complex)

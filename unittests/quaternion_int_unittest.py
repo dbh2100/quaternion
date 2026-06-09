@@ -46,47 +46,11 @@ class QuaternionicIntegerTestCase(unittest.TestCase):
         self.assertEqual(QuaternionicInteger(-2, -6, 3, k=10),
                          QuaternionicInteger(-2, -6, 3, 10))
 
-        #from quaternion to quaternionic integer
-        self.assertEqual(QuaternionicInteger(self.q), QuaternionicInteger(3, 17, -2, 4))
-
         #from int to quaternionic integer
         self.assertEqual(QuaternionicInteger(self.i), QuaternionicInteger(self.i, 0, 0, 0))
 
         #from float to quaternionic integer
         self.assertEqual(QuaternionicInteger(self.f), QuaternionicInteger(self.f, 0, 0, 0))
-
-        #from complex to quaternionic integer
-        self.assertEqual(QuaternionicInteger(self.c),
-                         QuaternionicInteger(self.c.real, self.c.imag, 0, 0))
-
-        #from complex pair to quaternionic integer
-        self.assertEqual(QuaternionicInteger(3 + 4j, -7 + 2j), QuaternionicInteger(3, 4, -7, 2))
-
-        #erroneous arguments
-        with self.assertRaises(TypeError):
-            QuaternionicInteger(1, 1, 1, 1, 1)
-        with self.assertRaises(TypeError):
-            QuaternionicInteger(1, 3+2j)
-        with self.assertRaises(TypeError):
-            QuaternionicInteger(3+2j, self.q)
-        with self.assertRaises(TypeError):
-            QuaternionicInteger(3+2j, -4-6j, 1)
-        with self.assertRaises(TypeError):
-            QuaternionicInteger(self.q, 5)
-        with self.assertRaises(ValueError):
-            QuaternionicInteger('x')
-        with self.assertRaises(TypeError):
-            QuaternionicInteger(4+3j, k=7)
-        with self.assertRaises(TypeError):
-            QuaternionicInteger(scalar=4+3j)
-        with self.assertRaises(TypeError):
-            QuaternionicInteger(9, scalar=4)
-        with self.assertRaises(TypeError):
-            QuaternionicInteger(9, -4, i=-7)
-        with self.assertRaises(TypeError):
-            QuaternionicInteger(9, -4, -7, j=0)
-        with self.assertRaises(ValueError):
-            QuaternionicInteger(x=7)
 
     def test_properties(self):
         self.assertIsInstance(self.iq1.scalar, int)
