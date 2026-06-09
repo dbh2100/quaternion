@@ -2,167 +2,55 @@
 
 from __future__ import absolute_import
 from __future__ import division
+from __future__ import annotations
 
 from numbers import Number, Complex, Real
 import re
 import math
 from collections.abc import Mapping, Iterable
+from typing import Union
+from dataclasses import dataclass
 
 
+@dataclass(frozen=True)
 class Quaternion(Number):
     '''A quaternion is a number in a four-dimensional mathematical system.
     It can be described as the sum of a scalar and a three-dimensional vector.
     '''
 
-    __slots__ = ('_scalar', '_i', '_j', '_k')
+    scalar: float = 0.0
+    i:      float = 0.0
+    j:      float = 0.0
+    k:      float = 0.0
 
-    def __init__(self, *args, **kwargs):
-        '''
-            Can instantiate quaternion with another Quaternion, one or two Complex numbers,
-            or zero to four Real numbers as arguments
-        '''
+    @classmethod
+    def from_string(cls, string: str) -> Quaternion:
 
-        if len(args) + len(kwargs) > 4:
-            raise TypeError(
-                f'{self.__class__.__name__} takes at most 4 arguments, '
-                f'{len(args) + len(kwargs)} given'
-            )
-
-        #set defaults
-        self._scalar = 0.0
-        self._i = 0.0
-        self._j = 0.0
-        self._k = 0.0
+        scalar, i, j, k = 0.0, 0.0, 0.0, 0.0
 
         try:
 
-            #creating Quaternion from Real numbers
-            if isinstance(args[0], Real):
-                if not all(isinstance(arg, Real) for arg in args):
-                    raise TypeError(
-                        f'If the first argument to {self.__class__.__name__} is Real, '
-                            'the other arguments must also be Real'
-                        % self.__class__.__name__
-                    )
-                self._scalar = float(args[0])
-                self._i = float(args[1])
-                self._j = float(args[2])
-                self._k = float(args[3])
+            if re.search(r"[^\dijk+-.\s]", string):
+                raise ValueError
 
-            #creating Quaternion from complex numbers
-            elif isinstance(args[0], Complex):
-                self._scalar = float(args[0].real)
-                self._i = float(args[0].imag)
-                if isinstance(args[1], Complex):
-                    self._j = float(args[1].real)
-                    self._k = float(args[1].imag)
+            for x in re.findall(r"[+-]?\s*\d*[.]?\d*[ijk]?\w", string):
+                if x[-1] == 'i':
+                    i = float(re.sub(r'\s', '', x[:-1]))
+                elif x[-1] == 'j':
+                    j = float(re.sub(r'\s', '', x[:-1]))
+                elif x[-1] == 'k':
+                    k = float(re.sub(r'\s', '', x[:-1]))
                 else:
-                    raise TypeError(
-                        f'If the first argument to {self.__class__.__name__} is Complex, '
-                            'the second argument must also be Complex'
-                    )
-                if len(args) > 2:
-                    raise TypeError(
-                        f'If the first argument to {self.__class__.__name__} is Complex, '
-                            'only a single additional Complex argument is allowed'
-                    )
+                    scalar = float(x.replace(' ', ''))
 
-            #creating Quaternion from other Quaternion
-            elif isinstance(args[0], Quaternion):
-                self._scalar = float(args[0].scalar)
-                self._i = float(args[0].i)
-                self._j = float(args[0].j)
-                self._k = float(args[0].k)
-                if len(args) > 1:
-                    raise TypeError(
-                        f'If the first argument to {self.__class__.__name__} is Quaternion, '
-                            'no other arguments are allowed'
-                        % self.__class__.__name__
-                    )
+        except ValueError as exc:
+            raise ValueError(
+                f'{cls.__name__} arg is a malformed string'
+            ) from exc
 
-            #creating Quaternon from string
-            elif isinstance(args[0], (str, bytes)):
-                try:
-                    if re.search(r"[^\dijk+-.\s]", args[0]):
-                        raise ValueError
-                    for x in re.findall(r"[+-]?\s*\d*[.]?\d*[ijk]?\w", args[0]):
-                        if x[-1] == 'i':
-                            self._i = float(re.sub(r'\s', '', x[:-1]))
-                        elif x[-1] == 'j':
-                            self._j = float(re.sub(r'\s', '', x[:-1]))
-                        elif x[-1] == 'k':
-                            self._k = float(re.sub(r'\s', '', x[:-1]))
-                        else:
-                            self._scalar = float(x.replace(' ', ''))
-                except ValueError as exc:
-                    raise ValueError(
-                        f'{self.__class__.__name__} arg is a malformed string'
-                    ) from exc
-                if len(args) > 1:
-                    raise TypeError(
-                        f'{self.__class__.__name__} cannot take second argument if first '
-                            'is a string'
-                    )
+        return cls(scalar, i, j, k)
 
-            else:
-                raise TypeError(
-                    f'{self.__class__.__name__} arguments must be a string, Real, Complex, '
-                        'or Quaternion'
-                )
-
-        except IndexError:
-            pass
-
-        if kwargs and not all(isinstance(arg, Real) for arg in args):
-            raise TypeError(
-                f'If keyword arguments used for {self.__class__.__name__}, '
-                    'all non-keyword arguments must be Real'
-            )
-        for key, value in kwargs.items():
-            if not isinstance(value, Real):
-                raise TypeError(
-                    f'All keyword arguments for {self.__class__.__name__} must be real'
-                )
-            if key == 'scalar':
-                if len(args) > 0:
-                    raise TypeError(f'scalar in position {len(args)}')
-                self._scalar = value
-            elif key == 'i':
-                if len(args) > 1:
-                    raise TypeError(f'i in position {len(args)}')
-                self._i = value
-            elif key == 'j':
-                if len(args) > 2:
-                    raise TypeError(f'j in position {len(args)}')
-                self._j = value
-            elif key == 'k':
-                if len(args) > 3:
-                    raise TypeError(f'k in position {len(args)}')
-                self._k = value
-            else:
-                raise ValueError(f'Inappropriate keyword detected: {key}')
-
-    @property
-    def scalar(self):
-        '''The quaternion's scalar component'''
-        return self._scalar
-
-    @property
-    def i(self):
-        '''The quaternion vector's x-coordinate'''
-        return self._i
-
-    @property
-    def j(self):
-        '''The quaternion vector's y-coordinate'''
-        return self._j
-
-    @property
-    def k(self):
-        '''The quaternion vector's z-coordinate'''
-        return self._k
-
-    def __repr__(self):
+    def __repr__(self) -> str:
 
         i_sign = '-' if self.i < 0 else '+'
         j_sign = '-' if self.j < 0 else '+'
@@ -175,15 +63,15 @@ class Quaternion(Number):
 
         return ' '.join([scalar_part, i_part, j_part, k_part])
 
-    def __add__(self, other):
+    def __add__(self, other: Quaternion) -> Quaternion:
         if isinstance(other, Real):
-            s = self.scalar + other
+            s = self.scalar + float(other)
             i = self.i
             j = self.j
             k = self.k
         elif isinstance(other, Complex):
-            s = self.scalar + other.real
-            i = self.i + other.imag
+            s = self.scalar + float(other.real)
+            i = self.i + float(other.imag)
             j = self.j
             k = self.k
         elif isinstance(other, Quaternion):
@@ -195,44 +83,44 @@ class Quaternion(Number):
             return NotImplemented
         return Quaternion(s, i, j, k)
 
-    def __radd__(self, other):
+    def __radd__(self, other: Quaternion) -> Quaternion:
         if isinstance(other, Real):
-            s = other + self.scalar
+            s = float(other) + self.scalar
             i = self.i
             j = self.j
             k = self.k
         elif isinstance(other, Complex):
-            s = other.real + self.scalar
-            i = other.imag + self.i
+            s = float(other.real) + self.scalar
+            i = float(other.imag) + self.i
             j = self.j
             k = self.k
         else:
             return NotImplemented
         return Quaternion(s, i, j, k)
 
-    def __neg__(self):
+    def __neg__(self) -> Quaternion:
         return Quaternion(-self.scalar, -self.i, -self.j, -self.k)
 
-    def __pos__(self):
+    def __pos__(self) -> Quaternion:
         return self
 
-    def __sub__(self, other):
+    def __sub__(self, other: Quaternion) -> Quaternion:
         return self + -other
 
-    def __rsub__(self, other):
+    def __rsub__(self, other: Quaternion) -> Quaternion:
         return -self + other
 
-    def __mul__(self, other):
+    def __mul__(self, other: Quaternion) -> Quaternion:
         if isinstance(other, Real):
-            s = self.scalar * other
-            i = self.i * other
-            j = self.j * other
-            k = self.k * other
+            s = self.scalar * float(other)
+            i = self.i * float(other)
+            j = self.j * float(other)
+            k = self.k * float(other)
         elif isinstance(other, Complex):
-            s = self.scalar * other.real - self.i * other.imag
-            i = self.scalar * other.imag + self.i * other.real
-            j = self.j * other.real + self.k * other.imag
-            k = -self.j * other.imag + self.k * other.real
+            s = self.scalar * float(other.real) - self.i * float(other.imag)
+            i = self.scalar * float(other.imag) + self.i * float(other.real)
+            j = self.j * float(other.real) + self.k * float(other.imag)
+            k = -self.j * float(other.imag) + self.k * float(other.real)
         elif isinstance(other, Quaternion):
             s = self.scalar * other.scalar - self.i * other.i - self.j * other.j - self.k * other.k
             i = self.scalar * other.i + self.i * other.scalar + self.j * other.k - self.k * other.j
@@ -242,107 +130,112 @@ class Quaternion(Number):
             return NotImplemented
         return Quaternion(s, i, j, k)
 
-    def __rmul__(self, other):
+    def __rmul__(self, other: Quaternion) -> Quaternion:
         if isinstance(other, Real):
-            s = other * self.scalar
-            i = other * self.i
-            j = other * self.j
-            k = other * self.k
+            s = float(other) * self.scalar
+            i = float(other) * self.i
+            j = float(other) * self.j
+            k = float(other) * self.k
         elif isinstance(other, Complex):
-            s = other.real * self.scalar - other.imag * self.i
-            i = other.real * self.i + other.imag * self.scalar
-            j = other.real * self.j - other.imag * self.k
-            k = other.real * self.k + other.imag * self.j
+            s = float(other.real) * self.scalar - float(other.imag) * self.i
+            i = float(other.real) * self.i + float(other.imag) * self.scalar
+            j = float(other.real) * self.j - float(other.imag) * self.k
+            k = float(other.real) * self.k + float(other.imag) * self.j
         else:
             return NotImplemented
         return Quaternion(s, i, j, k)
 
-    def __truediv__(self, other):
+    def __truediv__(self, other: Quaternion) -> Quaternion:
         if isinstance(other, Real):
-            return Quaternion(self.scalar / other, self.i / other, self.j / other, self.k / other)
+            return Quaternion(
+                self.scalar / float(other),
+                self.i / float(other),
+                self.j / float(other),
+                self.k / float(other)
+            )
         if isinstance(other, Complex):
-            return self / Quaternion(other)
+            return self / Quaternion(float(other.real), float(other.imag))
         if isinstance(other, Quaternion):
             return self * other.reciprocal()
         return NotImplemented
 
-    def __rtruediv__(self, other):
+    def __rtruediv__(self, other: Union[float, Real, Complex, Quaternion]) -> Quaternion:
         if isinstance(other, Complex):
-            return other * self.reciprocal()
+            return Quaternion(float(other.real), float(other.imag)) * self.reciprocal()
         return NotImplemented
 
-    def __pow__(self, exponent):
+    def __pow__(self, exponent: Union[float, Real, Complex, Quaternion]):
         if isinstance(exponent, Real):
-            a = self.norm() ** exponent
-            b = math.cos(exponent * self.angle())
-            c = self.unit_vector() * math.sin(exponent * self.angle())
+            a = self.norm() ** float(exponent)
+            b = math.cos(float(exponent) * self.angle())
+            c = self.unit_vector() * math.sin(float(exponent) * self.angle())
             return a * (b + c)
         return NotImplemented
 
-    def __rpow__(self, base):
+    def __rpow__(self, base: Union[float, Real, Complex, Quaternion]) -> Quaternion:
         if isinstance(base, Real):
             a = math.exp(self.scalar)
             b = math.cos(self.vector().norm())
             c = self.unit_vector() * math.sin(self.vector().norm())
-            return (a * (b + c)) ** math.log(base)
+            return (a * (b + c)) ** math.log(float(base))
         return NotImplemented
 
-    def __abs__(self):
+    def __abs__(self) -> float:
         return self.norm()
 
-    def vector(self):
+    def vector(self) -> Quaternion:
         '''The quaternion's vector component'''
         return Quaternion(0, self.i, self.j, self.k)
 
-    def norm(self):
+    def norm(self) -> float:
         '''The "length" of the quaternion'''
         return math.sqrt(self.scalar ** 2 + self.i ** 2 + self.j ** 2 + self.k ** 2)
 
-    def conjugate(self):
+    def conjugate(self) -> Quaternion:
         '''The conjugate of the quaternion,
         with the same scalar component and the vector numbers negated
         '''
         return Quaternion(self.scalar, -self.i, -self.j, -self.k)
 
-    def reciprocal(self):
+    def reciprocal(self) -> Quaternion:
         '''The multiplicative inverse of the quaternion'''
         return self.conjugate() / (self.norm() ** 2)
 
-    def unit(self):
+    def unit(self) -> Quaternion:
         '''The unit quaternion is the quaternion divided by its norm'''
         if self == 0:
             return self
         return self / self.norm()
 
-    def angle(self):
+    def angle(self) -> float:
         '''The angle of rotation associated with the quaternion,
         equal to the arccosine of its scalar component divided by its norm
         '''
         return math.acos(self.scalar / self.norm())
 
-    def unit_vector(self):
+    def unit_vector(self) -> Quaternion:
         '''The unit vector associated with the quaternion's vector component,
         representing the axis of rotation
         '''
         return self.vector().unit()
 
-    def complex_pair(self):
+    def complex_pair(self) -> tuple[complex, complex]:
         '''The quaternion as a 2-tuple of complex numbers'''
         return (complex(self.scalar, self.i), complex(self.j, self.k))
 
-    def __complex__(self):
+    def __complex__(self) -> complex:
         return complex(self.scalar, self.i)
 
-    def __float__(self):
+    def __float__(self) -> float:
         return float(self.scalar)
 
-    def __int__(self):
+    def __int__(self) -> int:
         return int(self.scalar)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return self != 0
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, Real):
             if self.scalar == other \
             and self.i == 0 \
@@ -363,18 +256,18 @@ class Quaternion(Number):
                 return True
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self == other
 
-    def to_list(self):
+    def to_list(self) -> list[Union[float, Real]]:
         '''The quaternion components as a list'''
         return [self.scalar, self.i, self.j, self.k]
 
-    def vector_to_list(self):
+    def vector_to_list(self) -> list[Union[float, Real]]:
         '''The quaternion vector components as a list'''
         return [self.i, self.j, self.k]
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         if not self.j and not self.k:
             if not self.i:
                 return hash(self.scalar)
@@ -382,7 +275,7 @@ class Quaternion(Number):
         return hash((self.scalar, self.i, self.j, self.k))
 
     @classmethod
-    def from_iterable(cls, it):
+    def from_iterable(cls, it) -> Quaternion:
         '''Create a quaternion instance from an iterable'''
         if isinstance(it, Mapping):
             return cls(**it)

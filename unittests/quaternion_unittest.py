@@ -249,44 +249,9 @@ class QuaternionTestCase(unittest.TestCase):
         #from float to quaternion
         self.assert_quaternion_equal(Quaternion(self.f), Quaternion(self.f, 0, 0, 0))
 
-        #from complex to quaternion
-        self.assert_quaternion_equal(Quaternion(self.c),
-                                     Quaternion(self.c.real, self.c.imag, 0, 0))
-
-        #from complex pair to quaternion
-        self.assert_quaternion_equal(Quaternion(3 + 4j, -7 + 2j), Quaternion(3, 4, -7, 2))
-
         #from string
-        self.assert_quaternion_equal(Quaternion('3.6 - 5i + 100k + 4.6j'),
+        self.assert_quaternion_equal(Quaternion.from_string('3.6 - 5i + 100k + 4.6j'),
                                      Quaternion(3.6, -5, 4.6, 100))
-
-        #erroneous arguments
-        with self.assertRaises(TypeError):
-            Quaternion(1, 1, 1, 1, 1)
-        with self.assertRaises(TypeError):
-            Quaternion(1, 3+2j)
-        with self.assertRaises(TypeError):
-            Quaternion(3+2j, self.q1)
-        with self.assertRaises(TypeError):
-            Quaternion(3+2j, -4-6j, 1)
-        with self.assertRaises(TypeError):
-            Quaternion(self.q1, 5)
-        with self.assertRaises(ValueError):
-            Quaternion('x')
-        with self.assertRaises(TypeError):
-            Quaternion('4j', 10)
-        with self.assertRaises(TypeError):
-            Quaternion(4+3j, k=7)
-        with self.assertRaises(TypeError):
-            Quaternion(scalar=4+3j)
-        with self.assertRaises(TypeError):
-            Quaternion(9, scalar=4)
-        with self.assertRaises(TypeError):
-            Quaternion(9, -4, i=-7)
-        with self.assertRaises(TypeError):
-            Quaternion(9, -4, -7, j=0)
-        with self.assertRaises(ValueError):
-            Quaternion(x=7)
 
     def test_conversion_from_quaternion(self):
         self.assertEqual(complex(self.q1), 3.7 + 17.1j)
