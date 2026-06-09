@@ -118,16 +118,7 @@ class DisplayEquation:
         q2 = self.q2
         operator = self.operator
 
-        integral = False
-        if isinstance(q1, QuaternionicInteger) and isinstance(q2, QuaternionicInteger):
-            integral = True
-
-        if integral:
-            q1 = QuaternionicInteger(q1)
-            q2 = QuaternionicInteger(q2)
-        else:
-            q1 = Quaternion(q1)
-            q2 = Quaternion(q2)
+        integral = isinstance(q1, QuaternionicInteger) and isinstance(q2, QuaternionicInteger)
 
         if operator == '+':
             q3 = q1 + q2

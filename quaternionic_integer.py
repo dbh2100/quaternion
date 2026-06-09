@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 
 from numbers import Integral, Complex, Real
-import operator
 from quaternion import Quaternion
 
 class QuaternionicInteger(Quaternion):
