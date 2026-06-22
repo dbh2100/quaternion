@@ -33,6 +33,7 @@ instance Num Quaternion where
             k = s1*k2 + i1*j2 - j1*i2 + k1*s2
         in Quaternion s i j k
 
+-- The angle of rotation associated with the quaternion
 angle :: Quaternion -> Float
 angle (Quaternion s i j k) = 
     let Quaternion norm _ _ _ = abs (Quaternion s i j k)
