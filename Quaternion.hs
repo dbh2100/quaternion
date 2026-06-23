@@ -3,7 +3,7 @@ module Quaternion
 , angle
 ) where
 
-data Quaternion = Quaternion Float Float Float Float deriving (Eq, Show)
+data Quaternion = Quaternion Double Double Double Double deriving (Eq, Show)
 
 instance Num Quaternion where
 
@@ -16,6 +16,7 @@ instance Num Quaternion where
     (-) :: Quaternion -> Quaternion -> Quaternion
     q1 - q2 = q1 + negate q2
 
+    -- The "length" of the quaternion
     abs :: Quaternion -> Quaternion
     abs (Quaternion s i j k) = Quaternion (sqrt (s^2 + i^2 + j^2 + k^2)) 0 0 0
 
@@ -34,7 +35,7 @@ instance Num Quaternion where
         in Quaternion s i j k
 
 -- The angle of rotation associated with the quaternion
-angle :: Quaternion -> Float
+angle :: Quaternion -> Double
 angle (Quaternion s i j k) = 
     let Quaternion norm _ _ _ = abs (Quaternion s i j k)
     in acos (s / norm)
