@@ -4,7 +4,10 @@ from __future__ import absolute_import
 
 from numbers import Integral, Complex, Real
 from quaternion import Quaternion
+from dataclasses import dataclass
 
+
+@dataclass(frozen=True)
 class QuaternionicInteger(Quaternion):
 
     '''Analogous to the Gaussian integers for complex numbers,
@@ -101,7 +104,6 @@ class QuaternionicInteger(Quaternion):
         return QuaternionicInteger(-self.scalar, -self.i, -self.j, -self.k)
 
     def __mul__(self, other):
-        from numbers import Real, Complex
         if isinstance(other, Integral):
             return QuaternionicInteger(self.scalar * int(other), self.i * int(other), self.j * int(other), self.k * int(other))
         if isinstance(other, QuaternionicInteger):
@@ -119,7 +121,6 @@ class QuaternionicInteger(Quaternion):
         return NotImplemented
 
     def __rmul__(self, other):
-        from numbers import Real, Complex
         if isinstance(other, Integral):
             return QuaternionicInteger(int(other) * self.scalar, int(other) * self.i, int(other) * self.j, int(other) * self.k)
         if isinstance(other, QuaternionicInteger):
@@ -137,7 +138,6 @@ class QuaternionicInteger(Quaternion):
         return NotImplemented
 
     def __truediv__(self, other):
-        from numbers import Real, Complex
         if isinstance(other, Integral):
             # exact integer division -> return QuaternionicInteger
             s = self.scalar / int(other)
@@ -152,14 +152,26 @@ class QuaternionicInteger(Quaternion):
         return NotImplemented
 
     def __rtruediv__(self, other):
-        from numbers import Real, Complex
-        if isinstance(other, Integral):
+
+        if isinstance(other, Real):
             return Quaternion(float(other)) / Quaternion(self.scalar, self.i, self.j, self.k)
-        if isinstance(other, Quaternion) or isinstance(other, Complex) or isinstance(other, Real):
-            return Quaternion(other) / Quaternion(self.scalar, self.i, self.j, self.k)
+
+        denominator = self.to_float_quaternion()
+
+        if isinstance(other, Complex):
+            c = complex(other)
+            numerator = Quaternion(c.real, c.imag, 0, 0)
+            return numerator / denominator
+        if isinstance(other, Quaternion):
+            numerator = Quaternion(other.scalar, other.i, other.j, other.k)
+            return numerator / denominator
         return NotImplemented
 
     def conjugate(self):
         return QuaternionicInteger(self.scalar, -self.i, -self.j, -self.k)
+
+    def to_float_quaternion(self) -> Quaternion:
+        '''Covert to a quaternion with floating-point components'''
+        return Quaternion(self.scalar, self.i, self.j, self.k)
 
 QuaternionicInteger.register(Integral) # type: ignore[type-abstract]

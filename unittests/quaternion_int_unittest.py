@@ -224,9 +224,9 @@ class QuaternionicIntegerTestCase(unittest.TestCase):
                          QuaternionicInteger(self.iq1.scalar, -self.iq1.i,
                                              -self.iq1.j, -self.iq1.k))
 
-    def test_conversion(self):
-        self.assert_quaternion_equal(Quaternion(QuaternionicInteger(5.3, 9.2, -10.8, 4.6)),
-                          Quaternion(5, 9, -10, 4))
+    def test_to_float_quaternion(self):
+        converted = QuaternionicInteger(5.3, 9.2, -10.8, 4.6).to_float_quaternion()
+        self.assert_quaternion_equal(converted, Quaternion(5, 9, -10, 4))
         self.assertEqual(complex(self.iq1), 5 + 9j)
         self.assertEqual(float(self.iq1), 5)
         self.assertEqual(int(self.iq1), 5)
