@@ -145,7 +145,7 @@ class Quaternion(Number):
             return NotImplemented
         return Quaternion(s, i, j, k)
 
-    def __truediv__(self, other: Union[float, Quaternion]) -> Quaternion:
+    def __truediv__(self, other: Union[complex, Quaternion]) -> Quaternion:
         if isinstance(other, Real):
             return Quaternion(
                 self.scalar / float(other),

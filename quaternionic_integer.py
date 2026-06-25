@@ -1,6 +1,6 @@
 '''Defines QuaternionicInteger class'''
 
-from __future__ import absolute_import
+from __future__ import absolute_import, annotations
 
 from numbers import Integral, Complex, Real
 from quaternion import Quaternion
@@ -60,84 +60,107 @@ class QuaternionicInteger(Quaternion):
     def __hash__(self) -> int:
         return hash((self.scalar, self.i, self.j, self.k))
 
-    def __add__(self, other):
-        from numbers import Real, Complex
+    def __add__(self, other: object) -> Quaternion:
+
         if isinstance(other, Integral):
             return QuaternionicInteger(self.scalar + int(other), self.i, self.j, self.k)
+
         if isinstance(other, QuaternionicInteger):
             return QuaternionicInteger(self.scalar + other.scalar,
                                        self.i + other.i,
                                        self.j + other.j,
                                        self.k + other.k)
+
         if isinstance(other, Complex):
             return Quaternion(self.scalar + float(other.real), self.i + float(other.imag), self.j, self.k)
+
         if isinstance(other, Quaternion):
             return Quaternion(self.scalar + other.scalar,
                               self.i + other.i,
                               self.j + other.j,
                               self.k + other.k)
+
         if isinstance(other, Real):
             return Quaternion(self.scalar + float(other), self.i, self.j, self.k)
+
         return NotImplemented
 
-    def __radd__(self, other):
-        from numbers import Real, Complex
+    def __radd__(self, other: object) -> Quaternion:
+
         if isinstance(other, Integral):
             return QuaternionicInteger(int(other) + self.scalar, self.i, self.j, self.k)
+
         if isinstance(other, QuaternionicInteger):
             return QuaternionicInteger(other.scalar + self.scalar,
                                        other.i + self.i,
                                        other.j + self.j,
                                        other.k + self.k)
+
         if isinstance(other, Complex):
             return Quaternion(float(other.real) + self.scalar, float(other.imag) + self.i, self.j, self.k)
+
         if isinstance(other, Quaternion):
             return Quaternion(other.scalar + self.scalar,
                               other.i + self.i,
                               other.j + self.j,
                               other.k + self.k)
+
         if isinstance(other, Real):
             return Quaternion(float(other) + self.scalar, self.i, self.j, self.k)
+
         return NotImplemented
 
-    def __neg__(self):
+    def __neg__(self) -> QuaternionicInteger:
         return QuaternionicInteger(-self.scalar, -self.i, -self.j, -self.k)
 
-    def __mul__(self, other):
+    def __mul__(self, other: object) -> Quaternion:
+
         if isinstance(other, Integral):
             return QuaternionicInteger(self.scalar * int(other), self.i * int(other), self.j * int(other), self.k * int(other))
+
         if isinstance(other, QuaternionicInteger):
             s = self.scalar * other.scalar - self.i * other.i - self.j * other.j - self.k * other.k
             i = self.scalar * other.i + self.i * other.scalar + self.j * other.k - self.k * other.j
             j = self.scalar * other.j - self.i * other.k + self.j * other.scalar + self.k * other.i
             k = self.scalar * other.k + self.i * other.j - self.j * other.i + self.k * other.scalar
             return QuaternionicInteger(s, i, j, k)
+
         if isinstance(other, Complex):
             return super().__mul__(Quaternion(float(other.real), float(other.imag)))
+
         if isinstance(other, Quaternion):
             return super().__mul__(other)
+
         if isinstance(other, Real):
             return super().__mul__(float(other))
+
         return NotImplemented
 
-    def __rmul__(self, other):
+    def __rmul__(self, other: object) -> Quaternion:
+
         if isinstance(other, Integral):
             return QuaternionicInteger(int(other) * self.scalar, int(other) * self.i, int(other) * self.j, int(other) * self.k)
+
         if isinstance(other, QuaternionicInteger):
             s = other.scalar * self.scalar - other.i * self.i - other.j * self.j - other.k * self.k
             i = other.scalar * self.i + other.i * self.scalar + other.j * self.k - other.k * self.j
             j = other.scalar * self.j - other.i * self.k + other.j * self.scalar + other.k * self.i
             k = other.scalar * self.k + other.i * self.j - other.j * self.i + other.k * self.scalar
             return QuaternionicInteger(s, i, j, k)
+
         if isinstance(other, Complex):
             return Quaternion(float(other.real), float(other.imag)) * Quaternion(self.scalar, self.i, self.j, self.k)
+
         if isinstance(other, Quaternion):
             return other * Quaternion(self.scalar, self.i, self.j, self.k)
+
         if isinstance(other, Real):
             return float(other) * Quaternion(self.scalar, self.i, self.j, self.k)
+
         return NotImplemented
 
-    def __truediv__(self, other):
+    def __truediv__(self, other: object) -> Quaternion:
+
         if isinstance(other, Integral):
             # exact integer division -> return QuaternionicInteger
             s = self.scalar / int(other)
@@ -147,11 +170,13 @@ class QuaternionicInteger(Quaternion):
             if all(float(x).is_integer() for x in (s, i, j, k)):
                 return QuaternionicInteger(int(s), int(i), int(j), int(k))
             return Quaternion(s, i, j, k)
-        if isinstance(other, Quaternion) or isinstance(other, Complex) or isinstance(other, Real):
+
+        if isinstance(other, Quaternion) or isinstance(other, complex):
             return super().__truediv__(other)
+
         return NotImplemented
 
-    def __rtruediv__(self, other):
+    def __rtruediv__(self, other: object) -> Quaternion:
 
         if isinstance(other, Real):
             return Quaternion(float(other)) / Quaternion(self.scalar, self.i, self.j, self.k)
