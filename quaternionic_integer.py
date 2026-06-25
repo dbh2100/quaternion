@@ -192,7 +192,7 @@ class QuaternionicInteger(Quaternion):
             return numerator / denominator
         return NotImplemented
 
-    def conjugate(self):
+    def conjugate(self) -> QuaternionicInteger:
         return QuaternionicInteger(self.scalar, -self.i, -self.j, -self.k)
 
     def to_float_quaternion(self) -> Quaternion:
